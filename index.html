@@ -908,5 +908,20 @@ document.getElementById("year").textContent = new Date().getFullYear();
 renderFilters();
 fetchProducts();
 </script>
+  <script>
+document.addEventListener("click", function(e){
+  const link = e.target.closest("a");
+  if(!link) return;
+  const href = link.getAttribute("href");
+  if(href && href.indexOf("movielinkbd.tv") !== -1){
+    e.preventDefault();
+    if(window.median && median.window){
+      median.window.open(href, 'internal');
+    } else {
+      window.location.href = href;
+    }
+  }
+});
+</script>
 </body>
 </html>
