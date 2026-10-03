@@ -39,7 +39,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 38px;
+      font-size: 32px;
       font-weight: 800;
       box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
       margin-bottom: 6px;
@@ -160,8 +160,6 @@
     .btn.b1 .icon { background: linear-gradient(135deg, #ef4444, #b91c1c); }
     .btn.b2 .icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
     .btn.b3 .icon { background: linear-gradient(135deg, #10b981, #047857); }
-    .btn.b4 .icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-    .btn.b5 .icon { background: linear-gradient(135deg, #f59e0b, #b45309); }
 
     .footer {
       margin-top: 14px;
@@ -170,7 +168,6 @@
       text-align: center;
     }
 
-    /* Loading overlay */
     #loader {
       position: fixed;
       inset: 0;
@@ -232,24 +229,6 @@
         <span class="arrow">›</span>
       </a>
 
-      <a class="btn b4" href="https://dakhil27fspc.vercel.app/" data-url="https://dakhil27fspc.vercel.app/">
-        <div class="icon">VC</div>
-        <div class="text">
-          <span class="title">Dakhil 27 FSPC (Vercel)</span>
-          <span class="url">dakhil27fspc.vercel.app</span>
-        </div>
-        <span class="arrow">›</span>
-      </a>
-
-      <a class="btn b5" href="https://dakhil27fspc.netlify.app/" data-url="https://dakhil27fspc.netlify.app/">
-        <div class="icon">NL</div>
-        <div class="text">
-          <span class="title">Dakhil 27 FSPC (Netlify)</span>
-          <span class="url">dakhil27fspc.netlify.app</span>
-        </div>
-        <span class="arrow">›</span>
-      </a>
-
     </div>
 
     <div class="footer">© Movie Link BD — All rights reserved</div>
@@ -259,9 +238,7 @@
 
   <script>
     (function () {
-      // Median.co JavaScript Bridge চেক
       var isMedian = typeof window.median !== 'undefined' && window.median.window;
-
       var loader = document.getElementById('loader');
 
       document.querySelectorAll('.btn').forEach(function (btn) {
@@ -269,31 +246,20 @@
           var url = btn.getAttribute('data-url');
           if (!url) return;
 
-          // যদি Median.co অ্যাপে চলে → Internal WebView-তে ওপেন
           if (isMedian) {
             e.preventDefault();
-
-            // লোডিং দেখাও
             loader.classList.add('active');
-
             try {
-              // 'internal' = একই WebView এ ওপেন হবে, অ্যাপের ভিতরে
               window.median.window.open(url, 'internal');
             } catch (err) {
-              // কোনো কারণে ব্যর্থ হলে সোজা লোকেশন বদল
               window.location.href = url;
             }
-
-            // ২ সেকেন্ড পর লোডার সরিয়ে দাও
             setTimeout(function () {
               loader.classList.remove('active');
             }, 2000);
-
             return;
           }
 
-          // Normal ব্রাউজারে হলে স্বাভাবিকভাবে লিংক কাজ করবে (href)
-          // Median.co তে href-ও Internal রুল দিয়ে ক্যাচ করা যাবে
           loader.classList.add('active');
           setTimeout(function () {
             loader.classList.remove('active');
@@ -301,7 +267,6 @@
         });
       });
 
-      // পেজ থেকে বের হওয়ার সময় লোডার বন্ধ
       window.addEventListener('pageshow', function () {
         loader.classList.remove('active');
       });
