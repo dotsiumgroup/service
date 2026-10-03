@@ -386,6 +386,7 @@ function showBanner(text) {
 function hideBanner() { domBanner.classList.remove("visible"); }
 
 async function ping(url, timeout) {
+  if (/median|gonative/i.test(navigator.userAgent)) return true;
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeout);
   try {
