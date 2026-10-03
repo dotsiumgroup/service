@@ -1,51 +1,312 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>চালিয়ে যান</title>
-<style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html,body{width:100%;height:100%;}
-  body{
-    display:flex;align-items:center;justify-content:center;
-    min-height:100dvh;background:#0a1f26;color:#fff;
-    font-family:Arial,"Noto Sans Bengali",sans-serif;
-    overflow:hidden;
-  }
-  .wrap{
-    display:flex;flex-direction:column;align-items:center;gap:24px;
-    padding:30px;text-align:center;
-  }
-  .title{
-    font-size:20px;font-weight:700;
-    background:linear-gradient(100deg,#81d4fa,#fff,#c8a8ff);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-clip:text;
-  }
-  .btn{
-    background:linear-gradient(135deg,#e2136e,#ff4f9a);
-    color:#fff;border:0;padding:18px 48px;border-radius:14px;
-    font-size:18px;font-weight:700;font-family:inherit;
-    cursor:pointer;
-    box-shadow:0 14px 30px -14px rgba(226,19,110,.7);
-    transition:transform .15s;
-  }
-  .btn:active{transform:scale(.96);}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Movie Link BD</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 18px;
+      gap: 18px;
+    }
+
+    .logo {
+      width: 84px;
+      height: 84px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+      margin-bottom: 6px;
+      animation: pop 0.5s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-align: center;
+      background: linear-gradient(90deg, #f87171, #fbbf24);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .buttons {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:active::before {
+      left: 100%;
+    }
+
+    .btn .icon {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .btn .text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .btn .text .title {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn .text .url {
+      font-size: 11px;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn .arrow {
+      font-size: 20px;
+      color: #64748b;
+    }
+
+    /* Per-brand colors */
+    .btn.b1 .icon { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+    .btn.b2 .icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .btn.b3 .icon { background: linear-gradient(135deg, #10b981, #047857); }
+    .btn.b4 .icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .btn.b5 .icon { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    /* Loading overlay */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(4px);
+    }
+
+    #loader.active { display: flex; }
+
+    .spinner {
+      width: 46px;
+      height: 46px;
+      border: 4px solid #334155;
+      border-top-color: #ef4444;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
 
-<div class="wrap">
-  <p class="title">চালিয়ে যেতে নিচের বাটনে চাপ দিন</p>
-  <button class="btn" id="goBtn">▶ মুভি দেখুন</button>
-</div>
+  <div class="container">
+    <div class="logo">ML</div>
+    <h1>Movie Link BD</h1>
+    <p class="subtitle">নিচের যেকোনো একটি সাইট বেছে নিন</p>
 
-<script>
-document.getElementById("goBtn").addEventListener("click", function () {
-  window.location.href = "https://movielinkbd.tv/";
-});
-</script>
+    <div class="buttons">
+
+      <a class="btn b1" href="https://movielinkbd.tv" data-url="https://movielinkbd.tv">
+        <div class="icon">TV</div>
+        <div class="text">
+          <span class="title">Movie Link BD (.tv)</span>
+          <span class="url">movielinkbd.tv</span>
+        </div>
+        <span class="arrow">›</span>
+      </a>
+
+      <a class="btn b2" href="https://movielinkbd.shop" data-url="https://movielinkbd.shop">
+        <div class="icon">SH</div>
+        <div class="text">
+          <span class="title">Movie Link BD (.shop)</span>
+          <span class="url">movielinkbd.shop</span>
+        </div>
+        <span class="arrow">›</span>
+      </a>
+
+      <a class="btn b3" href="https://movielinkbd.com" data-url="https://movielinkbd.com">
+        <div class="icon">CM</div>
+        <div class="text">
+          <span class="title">Movie Link BD (.com)</span>
+          <span class="url">movielinkbd.com</span>
+        </div>
+        <span class="arrow">›</span>
+      </a>
+
+      <a class="btn b4" href="https://dakhil27fspc.vercel.app/" data-url="https://dakhil27fspc.vercel.app/">
+        <div class="icon">VC</div>
+        <div class="text">
+          <span class="title">Dakhil 27 FSPC (Vercel)</span>
+          <span class="url">dakhil27fspc.vercel.app</span>
+        </div>
+        <span class="arrow">›</span>
+      </a>
+
+      <a class="btn b5" href="https://dakhil27fspc.netlify.app/" data-url="https://dakhil27fspc.netlify.app/">
+        <div class="icon">NL</div>
+        <div class="text">
+          <span class="title">Dakhil 27 FSPC (Netlify)</span>
+          <span class="url">dakhil27fspc.netlify.app</span>
+        </div>
+        <span class="arrow">›</span>
+      </a>
+
+    </div>
+
+    <div class="footer">© Movie Link BD — All rights reserved</div>
+  </div>
+
+  <div id="loader"><div class="spinner"></div></div>
+
+  <script>
+    (function () {
+      // Median.co JavaScript Bridge চেক
+      var isMedian = typeof window.median !== 'undefined' && window.median.window;
+
+      var loader = document.getElementById('loader');
+
+      document.querySelectorAll('.btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          var url = btn.getAttribute('data-url');
+          if (!url) return;
+
+          // যদি Median.co অ্যাপে চলে → Internal WebView-তে ওপেন
+          if (isMedian) {
+            e.preventDefault();
+
+            // লোডিং দেখাও
+            loader.classList.add('active');
+
+            try {
+              // 'internal' = একই WebView এ ওপেন হবে, অ্যাপের ভিতরে
+              window.median.window.open(url, 'internal');
+            } catch (err) {
+              // কোনো কারণে ব্যর্থ হলে সোজা লোকেশন বদল
+              window.location.href = url;
+            }
+
+            // ২ সেকেন্ড পর লোডার সরিয়ে দাও
+            setTimeout(function () {
+              loader.classList.remove('active');
+            }, 2000);
+
+            return;
+          }
+
+          // Normal ব্রাউজারে হলে স্বাভাবিকভাবে লিংক কাজ করবে (href)
+          // Median.co তে href-ও Internal রুল দিয়ে ক্যাচ করা যাবে
+          loader.classList.add('active');
+          setTimeout(function () {
+            loader.classList.remove('active');
+          }, 1500);
+        });
+      });
+
+      // পেজ থেকে বের হওয়ার সময় লোডার বন্ধ
+      window.addEventListener('pageshow', function () {
+        loader.classList.remove('active');
+      });
+    })();
+  </script>
 
 </body>
 </html>
