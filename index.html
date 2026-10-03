@@ -1,480 +1,51 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>সংযোগ হচ্ছে...</title>
+<title>চালিয়ে যান</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; }
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  background: #07152f;
-  color: #fff;
-  font-family: Arial, "Noto Sans Bengali", sans-serif;
-  text-align: center;
-  overflow: hidden;
-}
-
-/* ── Ambient orbs ── */
-.orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-.orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orbFloat 7s ease-in-out infinite; }
-.orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, #1565c0 0%, transparent 70%); top: -60px; left: -60px; animation-duration: 7s; }
-.orb-2 { width: 240px; height: 240px; background: radial-gradient(circle, #6a1b9a 0%, transparent 70%); bottom: -50px; right: -50px; animation-delay: -3s; animation-duration: 9s; }
-.orb-3 { width: 160px; height: 160px; background: radial-gradient(circle, #00695c 0%, transparent 70%); top: 45%; left: 65%; animation-delay: -1.5s; animation-duration: 8s; }
-@keyframes orbFloat {
-  0%,100% { opacity: 0.22; transform: translate(0,0) scale(1); }
-  50%      { opacity: 0.42; transform: translate(18px,14px) scale(1.08); }
-}
-
-/* ── Card ── */
-.card {
-  position: relative; z-index: 1;
-  padding: 32px 28px 28px;
-  max-width: 360px; width: 94%;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 22px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 10px 50px rgba(0,0,0,0.45);
-  animation: cardIn 0.5s cubic-bezier(.22,1,.36,1) both;
-}
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(22px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ── Spinner ── */
-.spinner-wrap { position: relative; width: 82px; height: 82px; margin: 0 auto 22px; }
-.ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid transparent; will-change: transform; }
-.ring-a { border-top-color: #4fc3f7; animation: spin 1.1s linear infinite; }
-.ring-b { inset: 9px; border-right-color: #9c6cff; animation: spin 1.7s linear infinite reverse; }
-.ring-c { inset: 18px; border-bottom-color: #00e5ff; animation: spin 2.4s linear infinite; }
-.ring-core { position: absolute; inset: 28px; border-radius: 50%; background: conic-gradient(#4fc3f7,#9c6cff,#00e5ff,#4fc3f7); animation: spin 3s linear infinite; opacity: 0.85; }
-.ring-core::after { content:''; position: absolute; inset: 3px; border-radius: 50%; background: #07152f; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Title area ── */
-.main-title {
-  font-size: 17px; font-weight: 700; margin-bottom: 4px;
-  background: linear-gradient(100deg, #81d4fa 0%, #fff 50%, #c8a8ff 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-/* ── Live status bar ── */
-.live-status {
-  font-size: 13px; color: rgba(255,255,255,0.65);
-  margin-bottom: 20px; min-height: 20px;
-  line-height: 1.5;
-  transition: opacity 0.2s;
-}
-
-/* ── Server bubbles ── */
-.servers { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; }
-.srv { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.srv-bubble {
-  width: 40px; height: 40px; border-radius: 11px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.3px;
-  background: rgba(255,255,255,0.05);
-  border: 1.5px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.25);
-  transition: all 0.3s ease;
-  position: relative; overflow: hidden;
-}
-.srv-bubble::before {
-  content:''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 55%);
-  opacity: 0; transition: opacity 0.3s;
-}
-.srv-bubble.idle { }
-.srv-bubble.checking {
-  border-color: #f0a500; color: #f0a500;
-  box-shadow: 0 0 14px rgba(240,165,0,0.45);
-  animation: bubblePulse 0.85s ease-in-out infinite;
-}
-.srv-bubble.checking::before { opacity: 1; }
-.srv-bubble.success {
-  border-color: #00e676; color: #00e676;
-  box-shadow: 0 0 16px rgba(0,230,118,0.55);
-  animation: successPop 0.4s cubic-bezier(.22,1,.36,1) both;
-}
-.srv-bubble.success::before { opacity: 1; }
-.srv-bubble.fail {
-  border-color: rgba(255,60,80,0.55);
-  color: rgba(255,60,80,0.65);
-}
-@keyframes bubblePulse {
-  0%,100% { transform: scale(1);    box-shadow: 0 0 10px rgba(240,165,0,0.35); }
-  50%      { transform: scale(1.1); box-shadow: 0 0 20px rgba(240,165,0,0.6);  }
-}
-@keyframes successPop {
-  0%   { transform: scale(0.8); }
-  60%  { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
-.srv-label { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.28); }
-
-/* ── Activity Log ── */
-.log-wrap {
-  background: rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 12px;
-  padding: 10px 12px;
-  margin-bottom: 16px;
-  max-height: 100px;
-  overflow-y: auto;
-  text-align: left;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.1) transparent;
-}
-.log-wrap::-webkit-scrollbar { width: 4px; }
-.log-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-.log-entry {
-  font-size: 11.5px;
-  line-height: 1.65;
-  color: rgba(255,255,255,0.45);
-  display: flex; align-items: flex-start; gap: 6px;
-  animation: logIn 0.3s ease both;
-}
-.log-entry + .log-entry { margin-top: 3px; }
-.log-entry.ok   { color: #69f0ae; }
-.log-entry.fail { color: rgba(255,120,100,0.8); }
-.log-entry.info { color: #81d4fa; }
-.log-entry.warn { color: #ffd54f; }
-.log-dot { flex-shrink: 0; margin-top: 4px; font-size: 9px; }
-@keyframes logIn {
-  from { opacity: 0; transform: translateX(-6px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-/* ── Round banner ── */
-.round-banner {
-  display: none;
-  align-items: center; justify-content: center; gap: 8px;
-  background: rgba(255,200,50,0.08);
-  border: 1px solid rgba(255,200,50,0.2);
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  font-size: 12.5px;
-  color: #ffd54f;
-  animation: bannerIn 0.4s cubic-bezier(.22,1,.36,1) both;
-}
-.round-banner.visible { display: flex; }
-@keyframes bannerIn {
-  from { opacity: 0; transform: scaleY(0.7); }
-  to   { opacity: 1; transform: scaleY(1); }
-}
-
-/* ── Progress ── */
-.progress-row {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 0;
-}
-.progress-label { font-size: 10px; color: rgba(255,255,255,0.28); white-space: nowrap; }
-.progress-track { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
-.progress-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg,#4fc3f7,#9c6cff); transition: width 0.55s cubic-bezier(.4,0,.2,1); }
-
-/* ── Error box ── */
-#errorBox { display: none; flex-direction: column; align-items: center; gap: 16px; animation: cardIn 0.4s ease both; }
-.err-icon { font-size: 50px; line-height: 1; animation: iconShake 0.5s ease both; }
-@keyframes iconShake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-8deg)} 75%{transform:rotate(6deg)} }
-.err-title { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.9); }
-.err-detail {
-  font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.75;
-  max-width: 270px;
-  background: rgba(255,60,80,0.06); border: 1px solid rgba(255,60,80,0.15);
-  border-radius: 10px; padding: 12px 14px; text-align: left;
-}
-.retry-btn {
-  padding: 12px 30px;
-  background: linear-gradient(135deg, #1565c0, #6a1b9a);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 50px; color: #fff;
-  font-size: 14px; font-family: inherit; font-weight: 700;
-  cursor: pointer; letter-spacing: 0.3px;
-  transition: transform 0.18s, box-shadow 0.18s;
-  box-shadow: 0 4px 22px rgba(21,101,192,0.4);
-}
-.retry-btn:hover  { transform: translateY(-2px); box-shadow: 0 7px 28px rgba(21,101,192,0.55); }
-.retry-btn:active { transform: translateY(0); }
-
-@media (prefers-reduced-motion: reduce) {
-  .orb,.ring,.ring-core,.srv-bubble { animation: none !important; }
-}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html,body{width:100%;height:100%;}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    min-height:100dvh;background:#0a1f26;color:#fff;
+    font-family:Arial,"Noto Sans Bengali",sans-serif;
+    overflow:hidden;
+  }
+  .wrap{
+    display:flex;flex-direction:column;align-items:center;gap:24px;
+    padding:30px;text-align:center;
+  }
+  .title{
+    font-size:20px;font-weight:700;
+    background:linear-gradient(100deg,#81d4fa,#fff,#c8a8ff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .btn{
+    background:linear-gradient(135deg,#e2136e,#ff4f9a);
+    color:#fff;border:0;padding:18px 48px;border-radius:14px;
+    font-size:18px;font-weight:700;font-family:inherit;
+    cursor:pointer;
+    box-shadow:0 14px 30px -14px rgba(226,19,110,.7);
+    transition:transform .15s;
+  }
+  .btn:active{transform:scale(.96);}
 </style>
 </head>
-
 <body>
-<div class="orbs" aria-hidden="true">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
 
-<div class="card">
-
-  <!-- ══ LOADING STATE ══ -->
-  <div id="loadingBox">
-
-    <div class="spinner-wrap" aria-hidden="true">
-      <div class="ring ring-a"></div>
-      <div class="ring ring-b"></div>
-      <div class="ring ring-c"></div>
-      <div class="ring-core"></div>
-    </div>
-
-    <p class="main-title">ওয়েবসাইটে প্রবেশ করা হচ্ছে</p>
-    <p class="live-status" id="liveStatus">সার্ভার খোঁজা শুরু হচ্ছে...</p>
-
-    <div class="servers">
-      <div class="srv"><div class="srv-bubble" id="b0">S1</div><div class="srv-label">Server<br>One</div></div>
-      <div class="srv"><div class="srv-bubble" id="b1">S2</div><div class="srv-label">Server<br>Two</div></div>
-      <div class="srv"><div class="srv-bubble" id="b2">S3</div><div class="srv-label">Server<br>Three</div></div>
-      <div class="srv"><div class="srv-bubble" id="b3">S4</div><div class="srv-label">Server<br>Four</div></div>
-    </div>
-
-    <div class="round-banner" id="roundBanner">
-      <span>🔄</span>
-      <span id="bannerText"></span>
-    </div>
-
-    <div class="log-wrap" id="logWrap" aria-live="polite" aria-label="কার্যক্রম লগ"></div>
-
-    <div class="progress-row">
-      <span class="progress-label" id="progressLabel">০ / ৮</span>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-
-  </div>
-
-  <!-- ══ ERROR STATE ══ -->
-  <div id="errorBox" role="alert">
-    <div class="err-icon">😔</div>
-    <p class="err-title">সংযোগ করা সম্ভব হয়নি</p>
-    <div class="err-detail">
-      ✦ চারটি সার্ভারে <strong>দুইবার করে</strong> চেষ্টা করা হয়েছে।<br>
-      ✦ কোনো সার্ভার সাড়া দেয়নি।<br><br>
-      <strong>কী করবে?</strong><br>
-      ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করো।
-    </div>
-    <button class="retry-btn" onclick="restart()">🔄 আবার চেষ্টা করো</button>
-  </div>
-
+<div class="wrap">
+  <p class="title">চালিয়ে যেতে নিচের বাটনে চাপ দিন</p>
+  <button class="btn" id="goBtn">▶ মুভি দেখুন</button>
 </div>
 
 <script>
-/* ────────────────────────────────────────────────────────────
-   সার্ভার তালিকা
-──────────────────────────────────────────────────────────── */
-const SERVERS = [
-  { id:0, key:"S1", name:"Server One",   note:"মূল সার্ভার (Cloudflare)",    url:"https://movielinkbd.tv/", timeout:8500 },
-  { id:1, key:"S2", name:"Server Two",   note:"মূল সার্ভার আবারও (Cloudflare)", url:"https://movielinkbd.tv/", timeout:5500 },
-  { id:2, key:"S3", name:"Server Three", note:"বিকল্প সার্ভার (Vercel)",     url:"https://movielinkbd.shop/",                  timeout:5500 },
-  { id:3, key:"S4", name:"Server Four",  note:"শেষ বিকল্প (Netlify)",        url:"https://movielinkbd.tv/",                 timeout:4500 }
-];
-
-const MAX_ROUNDS  = 2;
-const TOTAL_STEPS = MAX_ROUNDS * SERVERS.length;  // 8
-
-/* ============ ক্রস-সার্ভার সিঙ্ক সিস্টেম (হাব সাইট অংশ) ============ */
-const HUB_SYNC_PAYLOAD_KEY = 'hub_sync_payload';       // মূল সাইট থেকে পাওয়া টোকেন
-const HUB_SYNC_COUNTS_KEY  = 'hub_sync_send_counts';   // প্রতিটা ইউনিক লিংকে কতবার পাঠানো হয়েছে
-const HUB_SYNC_MAX_SENDS   = 2;                        // প্রতিটা ইউনিক লিংকে সর্বোচ্চ কতবার টোকেন পাঠানো হবে
-
-// পেজ লোড হওয়ার সাথে সাথেই (একবারই) URL-এ নতুন টোকেন আছে কিনা চেক করা
-function bomHubIngestIncomingToken() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('sync');
-    if (token) {
-      // নতুন টোকেন এসেছে মানে নতুন রেজিস্ট্রেশন/লগইন হয়েছে — আগের সব গণনা রিসেট করা
-      localStorage.setItem(HUB_SYNC_PAYLOAD_KEY, token);
-      localStorage.setItem(HUB_SYNC_COUNTS_KEY, JSON.stringify({}));
-      // ঠিকানাবার পরিষ্কার রাখা
-      params.delete('sync');
-      const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
-      window.history.replaceState({}, document.title, cleanUrl);
-    }
-  } catch (e) { /* উপেক্ষা করা হলো */ }
-}
-
-function bomHubGetStoredToken() {
-  return localStorage.getItem(HUB_SYNC_PAYLOAD_KEY) || null;
-}
-
-function bomHubGetSendCounts() {
-  try { return JSON.parse(localStorage.getItem(HUB_SYNC_COUNTS_KEY) || '{}'); }
-  catch (e) { return {}; }
-}
-
-function bomHubSaveSendCounts(counts) {
-  localStorage.setItem(HUB_SYNC_COUNTS_KEY, JSON.stringify(counts));
-}
-
-// একটা নির্দিষ্ট সার্ভার URL-এ পাঠানোর চূড়ান্ত লিংক তৈরি করা (প্রয়োজনে টোকেনসহ)
-function bomHubBuildFinalUrl(baseUrl) {
-  const token = bomHubGetStoredToken();
-  if (!token) return baseUrl; // কোনো টোকেন সেভ নেই, স্বাভাবিকভাবে পাঠানো
-
-  const counts = bomHubGetSendCounts();
-  const currentCount = counts[baseUrl] || 0;
-
-  if (currentCount >= HUB_SYNC_MAX_SENDS) {
-    // এই ইউনিক লিংকে ইতিমধ্যে দুইবার পাঠানো হয়ে গেছে, আর টোকেন লাগবে না
-    return baseUrl;
-  }
-
-  // এখনো দুইবার হয়নি, তাই টোকেনসহ পাঠানো হবে এবং গণনা বাড়ানো হবে
-  counts[baseUrl] = currentCount + 1;
-  bomHubSaveSendCounts(counts);
-
-  const separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
-  return baseUrl + separator + 'sync=' + encodeURIComponent(token);
-}
-
-/* ── DOM refs ── */
-const domStatus   = document.getElementById("liveStatus");
-const domLog      = document.getElementById("logWrap");
-const domBanner   = document.getElementById("roundBanner");
-const domBannerTx = document.getElementById("bannerText");
-const domProgress = document.getElementById("progressFill");
-const domPLabel   = document.getElementById("progressLabel");
-const domLoading  = document.getElementById("loadingBox");
-const domError    = document.getElementById("errorBox");
-
-let stepsDone = 0;
-
-function setBubble(i, state) {
-  const b = document.getElementById("b" + i);
-  if (b) b.className = "srv-bubble" + (state ? " " + state : "");
-}
-function resetBubbles() { SERVERS.forEach((_,i) => setBubble(i, "")); }
-
-function tick() {
-  stepsDone++;
-  const pct = Math.min(100, (stepsDone / TOTAL_STEPS) * 100);
-  domProgress.style.width = pct + "%";
-  const bn = n => String(n).replace(/[0-9]/g, d => "০১২৩৪৫৬৭৮৯"[d]);
-  domPLabel.textContent = bn(stepsDone) + " / " + bn(TOTAL_STEPS);
-}
-
-function setStatus(txt) {
-  domStatus.style.opacity = "0";
-  setTimeout(() => { domStatus.textContent = txt; domStatus.style.opacity = "1"; }, 180);
-}
-
-function addLog(icon, text, type = "") {
-  const entry = document.createElement("div");
-  entry.className = "log-entry" + (type ? " " + type : "");
-  entry.innerHTML = `<span class="log-dot">${icon}</span><span>${text}</span>`;
-  domLog.appendChild(entry);
-  domLog.scrollTop = domLog.scrollHeight;
-}
-
-function showBanner(text) {
-  domBannerTx.textContent = text;
-  domBanner.classList.add("visible");
-}
-function hideBanner() { domBanner.classList.remove("visible"); }
-
-async function ping(url, timeout) {
-  if (/median|gonative/i.test(navigator.userAgent)) return true;
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), timeout);
-  try {
-    await fetch(url, { method:"HEAD", mode:"no-cors", cache:"no-store", signal:ctrl.signal });
-    clearTimeout(t);
-    return true;
-  } catch {
-    clearTimeout(t);
-    return false;
-  }
-}
-
-/* ── Scan one full round (all 4 servers) ── */
-async function scanRound(round) {
-  resetBubbles();
-  hideBanner();
-
-  for (let i = 0; i < SERVERS.length; i++) {
-    const srv = SERVERS[i];
-
-    setBubble(i, "checking");
-    setStatus(`${srv.name} চেক করা হচ্ছে... ⏳`);
-
-    addLog("🔍", `${srv.name} (${srv.note})-এ সংযোগ করার চেষ্টা হচ্ছে...`, "info");
-
-    const ok = await ping(srv.url, srv.timeout);
-    tick();
-
-    if (ok) {
-      setBubble(i, "success");
-      setStatus(`${srv.name}-এ সংযোগ হয়ে গেছে! 🎉 ওয়েবসাইটে নিয়ে যাচ্ছি...`);
-      addLog("✅", `${srv.name} সাড়া দিয়েছে! ওয়েবসাইটে পাঠানো হচ্ছে।`, "ok");
-      domProgress.style.width = "100%";
-
-      // ============ সিঙ্ক টোকেনসহ চূড়ান্ত লিংক তৈরি করে রিডাইরেক্ট করা ============
-      const finalUrl = bomHubBuildFinalUrl(srv.url);
-      window.location.replace(finalUrl);
-      return true;
-    } else {
-      setBubble(i, "fail");
-      addLog("❌", `${srv.name} সাড়া দেয়নি।`, "fail");
-    }
-  }
-  return false;
-}
-
-/* ── Main router ── */
-async function startRouter() {
-  stepsDone = 0;
-  domProgress.style.width = "0%";
-  domPLabel.textContent = "০ / ৮";
-  domLog.innerHTML = "";
-  domLoading.style.display = "";
-  domError.style.display   = "none";
-  hideBanner();
-  resetBubbles();
-  setStatus("সার্ভার খোঁজা শুরু হচ্ছে...");
-
-  addLog("🚀", "ওয়েবসাইট খোলার প্রক্রিয়া শুরু হলো। মোট ৪টি সার্ভার পরীক্ষা করা হবে।", "info");
-
-  addLog("📡", "── রাউন্ড ১: প্রথমবার সব সার্ভার পরীক্ষা হচ্ছে ──", "info");
-  const r1 = await scanRound(1);
-  if (r1) return;
-
-  addLog("⚠️", "রাউন্ড ১ শেষ। কোনো সার্ভার এখনো পাওয়া যায়নি।", "warn");
-
-  showBanner("একবার চেষ্টা হয়ে গেছে — আবারো ট্রাই করে দেখি! 💪");
-  setStatus("সব সার্ভারে একবার নক করা হলো। আরেকবার চেষ্টা করছি...");
-
-  await new Promise(r => setTimeout(r, 1800));
-
-  addLog("🔄", "── রাউন্ড ২: আরেকবার সব সার্ভার পরীক্ষা হচ্ছে ──", "info");
-  const r2 = await scanRound(2);
-  if (r2) return;
-
-  addLog("😔", "দুই রাউন্ড শেষ। কোনো সার্ভারে পৌঁছানো সম্ভব হয়নি।", "fail");
-  domLoading.style.display = "none";
-  domError.style.display   = "flex";
-}
-
-/* ── ম্যানুয়াল রিট্রাই (বাটন থেকে) ── */
-function restart() {
-  startRouter();
-}
-
-// পেজ লোড হওয়ার সাথে সাথে একবারই ইনকামিং টোকেন প্রসেস করা (রিট্রাইয়ের সময় আবার না করা)
-bomHubIngestIncomingToken();
-startRouter();
+document.getElementById("goBtn").addEventListener("click", function () {
+  window.location.href = "https://movielinkbd.tv/";
+});
 </script>
+
 </body>
 </html>
